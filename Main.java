@@ -1,14 +1,13 @@
 public class Main {
     public static void main(String[] args) {
-        // Define the parameters for the sine wave sound
-        double frequency = 440; // Frequency of A4 note (in Hz)
-        double duration = 10.0; // Duration of the sound (in seconds)
-        double dBamplitude = 0.0; // Amplitude of the sound in decibels
+        // Create instances of different waveform sounds
+        //SineWaveSound sineWave = new SineWaveSound(440, 2, 0);
+        //RampWaveSound rampWave = new RampWaveSound(440, 2, 0);
+        SquareWaveSound squareWave = new SquareWaveSound(440, 2, 0);
 
-        // Create an instance of the SineWaveSound
-        SineWaveSound sineWaveSound = new SineWaveSound(frequency, duration, dBamplitude);
-
-        // Play the sound
-        sineWaveSound.play();
+        // Play the selected waveform sound
+        //SoundPlayer.playSound(sineWave);
+        //SoundPlayer.playSound(rampWave);
+        SoundPlayer.playSound(squareWave);
     }
 }

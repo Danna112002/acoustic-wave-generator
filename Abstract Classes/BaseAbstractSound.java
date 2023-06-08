@@ -12,7 +12,9 @@ public abstract class BaseAbstractSound {
         this.dBamplitude = dBamplitude;   
     }
 
-    public abstract void play(); //abstract methid to play the sound
+    //public abstract void play(); //abstract method to play the sound
+    public abstract byte[] generateSamples(); //abstract method to generate samples of chosen waveform
+
 
     public double getDuration() {
         return duration;

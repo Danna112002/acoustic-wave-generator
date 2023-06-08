@@ -1,7 +1,11 @@
 import javax.sound.sampled.*;
 
 public class SoundPlayer {
-    public static void playSound(byte[] samples, int sampleRate, int sampleSize) {
+    public static void playSound(BaseAbstractSound sound) {
+        byte[] samples = sound.generateSamples();
+        int sampleRate = sound.calculateSampleRate();
+        int sampleSize = sound.calculateSampleSize();
+
         try {
             // Set up audio format
             AudioFormat audioFormat = new AudioFormat(sampleRate, sampleSize, 1, true, false);
