@@ -1,6 +1,9 @@
 public class SquareWaveSound extends BaseAbstractSound {
-    public SquareWaveSound(double frequency, double duration, double dBamplitude) {
+    private double dutyFactor; // Duty factor of the square waveform
+
+    public SquareWaveSound(double frequency, double duration, double dBamplitude, double dutyFactor) {
         super(frequency, duration, dBamplitude);
+        this.dutyFactor = dutyFactor;
     }
 
     @Override
@@ -9,8 +12,10 @@ public class SquareWaveSound extends BaseAbstractSound {
         double period = calculateSampleRate() / frequency;
         byte[] samples = new byte[numSamples];
         double amplitude = calculateLinearAmplitude();
+        int highSamples = (int) (period * dutyFactor);
+
         for (int i = 0; i < numSamples; i++) {
-            samples[i] = (byte) ((i % period) < (period / 2) ? -amplitude : amplitude);
+            samples[i] = (byte) ((i % period) < highSamples ? amplitude : -amplitude);
         }
         return samples;
     }

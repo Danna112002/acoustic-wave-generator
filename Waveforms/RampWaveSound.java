@@ -1,4 +1,6 @@
 public class RampWaveSound extends BaseAbstractSound {
+    private double proportion;
+
     public RampWaveSound(double frequency, double duration, double dBamplitude) {
         super(frequency, duration, dBamplitude);
     }
@@ -11,11 +13,13 @@ public class RampWaveSound extends BaseAbstractSound {
         double amplitude = calculateLinearAmplitude();
         double increment = amplitude * 2 / period;
         double value = -amplitude;
+        int switchIndex = (int) (numSamples * proportion);
         for (int i = 0; i < numSamples; i++) {
             samples[i] = (byte) (value * 127);
             value += increment;
-            if (value > amplitude)
-                value = -amplitude;
+            if (i == switchIndex) {
+                increment = -increment; // Switch the increment direction
+            } 
         }
         return samples;
     }
