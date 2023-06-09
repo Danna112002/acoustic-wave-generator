@@ -5,29 +5,22 @@ public class CompositeSound extends BaseAbstractSound {
 
     public CompositeSound(List<BaseAbstractSound> waveforms) {
         super(0, 0, 0); // Set initial values to 0 as they are not used
-
         this.waveforms = waveforms;
-        calculateDurationAndAmplitude();
+        calculateDuration();
     }
 
-    private void calculateDurationAndAmplitude() {
-        double maxDuration = 0;
-        double maxAmplitude = 0;
+    private void calculateDuration() {
+        double totalDuration = 0;
+
 
         for (BaseAbstractSound waveform : waveforms) {
             double waveformDuration = waveform.getDuration();
-            double waveformAmplitude = waveform.getdBamplitude();
-
-            if (waveformDuration > maxDuration) {
-                maxDuration = waveformDuration;
-            }
-            if (waveformAmplitude > maxAmplitude) {
-                maxAmplitude = waveformAmplitude;
-            }
+            totalDuration += waveformDuration;
         }
 
-        setDuration(maxDuration);
-        setdBamplitude(maxAmplitude);
+        double meanDuration = totalDuration / waveforms.size();
+
+        setDuration(meanDuration);
     }
 
     @Override
@@ -35,13 +28,32 @@ public class CompositeSound extends BaseAbstractSound {
         int numSamples = (int) (calculateSampleRate() * getDuration());
         byte[] samples = new byte[numSamples];
 
-        for (BaseAbstractSound waveform : waveforms) {
-            byte[] waveformSamples = waveform.generateSamples();
+        // Create an array of threads
+        Thread[] threads = new Thread[waveforms.size()];
 
-            for (int i = 0; i < numSamples; i++) {
-                if (i < waveformSamples.length) {
-                    samples[i] += waveformSamples[i];
+        for (int i = 0; i < waveforms.size(); i++) {
+            final int index = i;
+
+            threads[i] = new Thread(() -> {
+                BaseAbstractSound waveform = waveforms.get(index);
+                byte[] waveformSamples = waveform.generateSamples();
+
+                for (int j = 0; j < numSamples; j++) {
+                    if (j < waveformSamples.length) {
+                        samples[j] += waveformSamples[j];
+                    }
                 }
+            });
+
+            threads[i].start();
+        }
+
+        // Wait for all threads to complete
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
 
