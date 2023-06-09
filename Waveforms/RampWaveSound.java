@@ -1,13 +1,14 @@
 public class RampWaveSound extends BaseAbstractSound {
     private double proportion;
 
-    public RampWaveSound(double frequency, double duration, double dBamplitude, double proportion) {
-        super(frequency, duration, dBamplitude);
+    public RampWaveSound(double frequency, double dBamplitude, double proportion) {
+        super(frequency, dBamplitude);
+        this.proportion = proportion;
     }
 
     @Override
     public byte[] generateSamples() {
-        int numSamples = (int) (calculateSampleRate() * duration);
+        int numSamples = calculateSampleRate(); // Generate samples for continuous playback
         double period = calculateSampleRate() / frequency;
         byte[] samples = new byte[numSamples];
         double amplitude = calculateLinearAmplitude();

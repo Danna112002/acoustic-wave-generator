@@ -1,47 +1,14 @@
 import javax.sound.sampled.*;
 
 public class SoundPlayer {
+    private static volatile boolean isPlaying;
+
     public static void playSound(BaseAbstractSound sound) {
-        if (sound instanceof CompositeSound) {
-            CompositeSound compositeSound = (CompositeSound) sound;
-            byte[] samples = compositeSound.generateSamples();
-            int sampleRate = compositeSound.calculateSampleRate();
-            int sampleSize = compositeSound.calculateSampleSize();
-
-            try {
-                // Set up audio format
-                AudioFormat audioFormat = new AudioFormat(sampleRate, sampleSize, 1, true, false);
-                DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, audioFormat);
-
-                // Open the audio line
-                SourceDataLine line = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
-                line.open(audioFormat);
-
-                // Start playing the sound
-                line.start();
-
-                // Write the samples to the audio line
-                line.write(samples, 0, samples.length);
-
-                // Block until all the samples have been played
-                line.drain();
-
-                // Close the audio line
-                line.close();
-            } 
-                catch (LineUnavailableException e) {
-                    e.printStackTrace();
-                }
-        }   
-        
-        else {
-            byte[] samples = sound.generateSamples();
-            int sampleRate = sound.calculateSampleRate();
-            int sampleSize = sound.calculateSampleSize();
+        isPlaying = true;
 
         try {
             // Set up audio format
-            AudioFormat audioFormat = new AudioFormat(sampleRate, sampleSize, 1, true, false);
+            AudioFormat audioFormat = new AudioFormat(sound.calculateSampleRate(), sound.calculateSampleSize(), 1, true, false);
             DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, audioFormat);
 
             // Open the audio line
@@ -51,20 +18,25 @@ public class SoundPlayer {
             // Start playing the sound
             line.start();
 
-            // Write the samples to the audio line
-            line.write(samples, 0, samples.length);
+            // Generate and write samples in a loop until playback is stopped
+            while (isPlaying) {
+                byte[] samples = sound.generateSamples();
+                line.write(samples, 0, samples.length);
+            }
 
             // Block until all the samples have been played
             line.drain();
 
             // Close the audio line
             line.close();
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
         }
-            catch (LineUnavailableException e) {
-                e.printStackTrace();
-            }
-        }
-            System.out.println("Unsupported sound type");
+
+        isPlaying = false;
+    }
+
+    public static void stopSound() {
+        isPlaying = false;
     }
 }
-

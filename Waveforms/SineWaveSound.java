@@ -1,11 +1,10 @@
 public class SineWaveSound extends BaseAbstractSound {
-    public SineWaveSound(double frequency, double duration, double dBamplitude) {
-        super(frequency, duration, dBamplitude);
+    public SineWaveSound(double frequency, double dBamplitude) {
+        super(frequency, dBamplitude);
     }
-
     @Override
     public byte[] generateSamples() {
-        int numSamples = (int) (calculateSampleRate() * duration);
+        int numSamples = calculateSampleRate(); // Generate samples for continuous playback
         double angularFrequency = 2 * Math.PI * frequency / calculateSampleRate();
         byte[] samples = new byte[numSamples];
         double amplitude = calculateLinearAmplitude();
