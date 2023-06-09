@@ -1,7 +1,7 @@
 public class RampWaveSound extends BaseAbstractSound {
     private double proportion;
 
-    public RampWaveSound(double frequency, double duration, double dBamplitude) {
+    public RampWaveSound(double frequency, double duration, double dBamplitude, double proportion) {
         super(frequency, duration, dBamplitude);
     }
 

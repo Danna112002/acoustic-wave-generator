@@ -1,54 +1,50 @@
-import java.util.ArrayList;
 import java.util.List;
 
 public class CompositeSound extends BaseAbstractSound {
     private List<BaseAbstractSound> waveforms;
 
     public CompositeSound(List<BaseAbstractSound> waveforms) {
-        super(0, 0, 0); // Placeholder values, not used in composite sound
-        this.waveforms = waveforms;
+        super(0, 0, 0); // Set initial values to 0 as they are not used
 
-        // Calculate the total duration of the composite sound
+        this.waveforms = waveforms;
+        calculateDurationAndAmplitude();
+    }
+
+    private void calculateDurationAndAmplitude() {
+        double maxDuration = 0;
+        double maxAmplitude = 0;
+
         for (BaseAbstractSound waveform : waveforms) {
-            duration = Math.max(duration, waveform.getDuration());
+            double waveformDuration = waveform.getDuration();
+            double waveformAmplitude = waveform.getdBamplitude();
+
+            if (waveformDuration > maxDuration) {
+                maxDuration = waveformDuration;
+            }
+            if (waveformAmplitude > maxAmplitude) {
+                maxAmplitude = waveformAmplitude;
+            }
         }
+
+        setDuration(maxDuration);
+        setdBamplitude(maxAmplitude);
     }
 
     @Override
     public byte[] generateSamples() {
-        List<Thread> threads = new ArrayList<>();
-        List<byte[]> waveformSamples = new ArrayList<>();
+        int numSamples = (int) (calculateSampleRate() * getDuration());
+        byte[] samples = new byte[numSamples];
 
-        // Create a thread for each waveform
         for (BaseAbstractSound waveform : waveforms) {
-            Thread thread = new Thread(() -> {
-                byte[] samples = waveform.generateSamples();
-                synchronized (waveformSamples) {
-                    waveformSamples.add(samples);
-                }
-            });
-            threads.add(thread);
-            thread.start();
-        }
+            byte[] waveformSamples = waveform.generateSamples();
 
-        // Wait for all threads to finish
-        for (Thread thread : threads) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            for (int i = 0; i < numSamples; i++) {
+                if (i < waveformSamples.length) {
+                    samples[i] += waveformSamples[i];
+                }
             }
         }
 
-        // Combine the samples from each waveform
-        int totalSamples = waveformSamples.stream().mapToInt(arr -> arr.length).sum();
-        byte[] compositeSamples = new byte[totalSamples];
-        int currentIndex = 0;
-        for (byte[] samples : waveformSamples) {
-            System.arraycopy(samples, 0, compositeSamples, currentIndex, samples.length);
-            currentIndex += samples.length;
-        }
-
-        return compositeSamples;
+        return samples;
     }
 }
