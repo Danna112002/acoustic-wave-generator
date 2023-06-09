@@ -19,7 +19,7 @@ public class SoundGeneratorGUI extends JFrame {
 
         // Create the components
         JLabel soundOptionsLabel = new JLabel("Sound Options");
-        soundOptionsComboBox = new JComboBox<>(new String[]{"Sine Wave", "Ramp Wave", "Square Wave"});
+        soundOptionsComboBox = new JComboBox<>(new String[]{"","Sine Wave", "Ramp Wave", "Square Wave"});
         JLabel frequencyLabel = new JLabel("Frequency (Hz)");
         frequencyTextField = new JTextField();
         JLabel amplitudeLabel = new JLabel("Amplitude");

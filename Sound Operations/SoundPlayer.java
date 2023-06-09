@@ -39,4 +39,7 @@ public class SoundPlayer {
     public static void stopSound() {
         isPlaying = false;
     }
+
+    public static void setSoundThread(Thread soundThread) {
+    }
 }

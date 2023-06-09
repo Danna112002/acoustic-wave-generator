@@ -9,6 +9,9 @@ public class CompositeSound extends BaseAbstractSound {
         calculateDuration();
     }
 
+    public CompositeSound(double frequency, double amplitude, int numBaseSounds) {
+    }
+
     private void calculateDuration() {
         double totalDuration = 0;
 
